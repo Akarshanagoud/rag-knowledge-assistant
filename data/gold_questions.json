@@ -1,0 +1,146 @@
+[
+  {
+    "question": "How long do I have to request a refund?",
+    "relevant_doc_ids": ["refund-policy"],
+    "answer_contains": ["30 days"],
+    "tags": ["paraphrase"]
+  },
+  {
+    "question": "How do I get my money back after buying the wrong plan?",
+    "relevant_doc_ids": ["refund-policy"],
+    "tags": ["paraphrase", "no-keyword-overlap"]
+  },
+  {
+    "question": "How long does a refund take to process?",
+    "relevant_doc_ids": ["refund-policy"],
+    "answer_contains": ["business days"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "Can I cancel an annual subscription and get money back?",
+    "relevant_doc_ids": ["refund-policy"],
+    "tags": ["multi-hop"]
+  },
+  {
+    "question": "Are setup fees refundable?",
+    "relevant_doc_ids": ["refund-policy"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "How long are audit records kept?",
+    "relevant_doc_ids": ["data-retention"],
+    "answer_contains": ["7 years"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "What happens to my data after I delete my account?",
+    "relevant_doc_ids": ["data-retention"],
+    "tags": ["paraphrase"]
+  },
+  {
+    "question": "How long are encrypted backups retained?",
+    "relevant_doc_ids": ["data-retention"],
+    "answer_contains": ["35 days"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "What does error E4021 mean?",
+    "relevant_doc_ids": ["authentication"],
+    "answer_contains": ["E4021"],
+    "tags": ["exact-token", "lexical-favours"]
+  },
+  {
+    "question": "What does E4033 indicate?",
+    "relevant_doc_ids": ["authentication"],
+    "tags": ["exact-token", "lexical-favours"]
+  },
+  {
+    "question": "How long before a web session times out?",
+    "relevant_doc_ids": ["authentication"],
+    "answer_contains": ["12 hours"],
+    "tags": ["paraphrase"]
+  },
+  {
+    "question": "What happens after too many wrong passwords?",
+    "relevant_doc_ids": ["authentication"],
+    "tags": ["paraphrase", "no-keyword-overlap"]
+  },
+  {
+    "question": "Which single sign-on protocols are supported?",
+    "relevant_doc_ids": ["authentication"],
+    "answer_contains": ["SAML"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "What is the default API rate limit?",
+    "relevant_doc_ids": ["rate-limits"],
+    "answer_contains": ["1000 requests"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "What should a client do when it receives HTTP 429?",
+    "relevant_doc_ids": ["rate-limits"],
+    "answer_contains": ["Retry-After"],
+    "tags": ["exact-token"]
+  },
+  {
+    "question": "Can I ask for a higher throughput allowance?",
+    "relevant_doc_ids": ["rate-limits"],
+    "tags": ["paraphrase", "no-keyword-overlap"]
+  },
+  {
+    "question": "How quickly must a Sev1 incident be acknowledged?",
+    "relevant_doc_ids": ["incident-response"],
+    "answer_contains": ["15 minutes"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "When is a postmortem required?",
+    "relevant_doc_ids": ["incident-response"],
+    "tags": ["paraphrase"]
+  },
+  {
+    "question": "What counts as a total outage versus a partial one?",
+    "relevant_doc_ids": ["incident-response"],
+    "tags": ["paraphrase", "no-keyword-overlap"]
+  },
+  {
+    "question": "How long does enterprise onboarding take?",
+    "relevant_doc_ids": ["onboarding"],
+    "answer_contains": ["four to six weeks"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "What do we need from the customer before kickoff?",
+    "relevant_doc_ids": ["onboarding"],
+    "tags": ["paraphrase"]
+  },
+  {
+    "question": "How many training sessions are included?",
+    "relevant_doc_ids": ["onboarding"],
+    "tags": ["specific"]
+  },
+  {
+    "question": "Which sessions expire, and what are the rate limits on bulk export?",
+    "relevant_doc_ids": ["authentication", "rate-limits"],
+    "tags": ["multi-document"]
+  },
+  {
+    "question": "What is the company holiday schedule for next year?",
+    "relevant_doc_ids": [],
+    "unanswerable": true,
+    "tags": ["unanswerable"]
+  },
+  {
+    "question": "How do I configure the Kubernetes ingress controller?",
+    "relevant_doc_ids": [],
+    "unanswerable": true,
+    "tags": ["unanswerable"]
+  },
+  {
+    "question": "What is the CEO's home address?",
+    "relevant_doc_ids": [],
+    "unanswerable": true,
+    "tags": ["unanswerable"]
+  }
+]
