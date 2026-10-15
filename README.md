@@ -4,10 +4,12 @@ A production-shaped retrieval-augmented generation stack — ingestion, chunking
 embeddings, hybrid search, reranking, grounded answers — with the evaluation
 harness that tells you whether any of it is working.
 
-[![CI](https://github.com/akarshanamachanpally/rag-knowledge-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/akarshanamachanpally/rag-knowledge-assistant/actions/workflows/ci.yml)
+[![CI](https://github.com/Akarshanagoud/rag-knowledge-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/Akarshanagoud/rag-knowledge-assistant/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Dependencies](https://img.shields.io/badge/core%20dependencies-none-brightgreen)
+
+**Docs:** [Architecture and use cases](docs/ARCHITECTURE.md) · [Verified results](docs/RESULTS.md)
 
 ```bash
 pip install -e ".[dev]"
