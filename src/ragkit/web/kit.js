@@ -86,7 +86,8 @@
   function initTheme(button) {
     let theme = store.get("kit.theme", "system");
     applyTheme(theme);
-    if (!button) return;
+    if (!button || button.dataset.kitTheme) return;
+    button.dataset.kitTheme = "1";
     const label = () => {
       button.textContent = THEME_ICON[theme];
       button.setAttribute("aria-label", "Theme: " + theme + ". Click to change.");
@@ -578,6 +579,18 @@
     return "M" + x + "," + yb + "V" + (yTop + rr) + "Q" + x + "," + yTop + " " + (x + rr) + "," + yTop + "H" + (x + w - rr) + "Q" + (x + w) + "," + yTop + " " + (x + w) + "," + (yTop + rr) + "V" + yb + "Z";
   }
 
+  /** Draws x-axis labels left to right, skipping any that would overlap the previous one. */
+  function xLabels(svg, items, y) {
+    let lastRight = -Infinity;
+    for (const it of items) {
+      const w = String(it.text).length * 6.4;
+      const left = it.anchor === "start" ? it.x : it.anchor === "end" ? it.x - w : it.x - w / 2;
+      if (left < lastRight + 8) continue;
+      svg.appendChild(s("text", { x: it.x, y, "text-anchor": it.anchor }, it.text));
+      lastRight = left + w;
+    }
+  }
+
   function labelEvery(labels, band, charWidth) {
     const longest = labels.reduce((m, l) => Math.max(m, String(l).length), 1);
     return Math.max(1, Math.ceil((longest * (charWidth || 6.6) + 10) / Math.max(1, band)));
@@ -642,6 +655,7 @@
         svg.appendChild(s("text", { x: padL - 8, y: y(t) + 4, "text-anchor": "end" }, yFormat(t)));
       }
       const every = labelEvery(labels.map(xFormat), band);
+      const xItems = [];
       labels.forEach((lab, i) => {
         const x0 = padL + band * i;
         const cx = x0 + band / 2;
@@ -668,9 +682,7 @@
             svg.appendChild(s("path", { d: topRoundedBar(bx, y(v), barW, Math.max(0.5, y(0) - y(v)), 4), fill: sr.color || seriesColor(si) }));
           });
         }
-        if (i % every === 0) {
-          svg.appendChild(s("text", { x: cx, y: height - 6, "text-anchor": "middle" }, xFormat(lab, i)));
-        }
+        if (i % every === 0) xItems.push({ x: cx, text: xFormat(lab, i), anchor: "middle" });
         const hit = s("rect", { class: "hit", x: x0, y: padT, width: band, height: plotH, tabindex: "0" });
         const rows = () => {
           const r = series.map((sr, si) => ({ label: sr.name, value: (sr.format || yFormat)(sr.values[i] || 0), color: sr.color || seriesColor(si) }));
@@ -695,6 +707,7 @@
         svg.appendChild(hit);
       });
       svg.appendChild(s("line", { class: "base-line", x1: padL, x2: W - padR, y1: y(0), y2: y(0) }));
+      xLabels(svg, xItems, height - 6);
       wrap.appendChild(svg);
     });
     return wrap;
@@ -739,9 +752,11 @@
       }
       const step = n <= 1 ? plotW : plotW / (n - 1);
       const every = labelEvery(labels.map(xFormat), step);
+      const xItems = [];
       labels.forEach((lab, i) => {
-        if (i % every === 0 || (opts.labelLast && i === n - 1)) svg.appendChild(s("text", { x: x(i), y: height - 6, "text-anchor": i === 0 && n > 1 ? "start" : i === n - 1 && n > 1 ? "end" : "middle" }, xFormat(lab, i)));
+        if (i % every === 0 || (opts.labelLast && i === n - 1)) xItems.push({ x: x(i), text: xFormat(lab, i), anchor: i === 0 && n > 1 ? "start" : i === n - 1 && n > 1 ? "end" : "middle" });
       });
+      xLabels(svg, xItems, height - 6);
       if (opts.marker !== undefined && opts.marker !== null) {
         svg.appendChild(s("line", { class: "base-line", x1: x(opts.marker), x2: x(opts.marker), y1: padT, y2: padT + plotH, "stroke-dasharray": "3 3" }));
         if (opts.markerLabel) svg.appendChild(s("text", { x: x(opts.marker) + 6, y: padT + 10 }, opts.markerLabel));
@@ -808,6 +823,7 @@
           .filter((r) => r.v !== null && r.v !== undefined && Number.isFinite(r.v))
           .map((r) => ({ label: r.sr.name, value: (r.sr.format || yFormat)(r.v), color: r.sr.color || seriesColor(r.si) }));
         if (opts.band && opts.band.lo[i] !== null && opts.band.lo[i] !== undefined) rows.push({ label: opts.band.label || "Range", value: yFormat(opts.band.lo[i]) + " – " + yFormat(opts.band.hi[i]) });
+        if (opts.extraRows) rows.push(...opts.extraRows(i));
         tip.show(cx, cy, ttContent(opts.tooltipTitle ? opts.tooltipTitle(labels[i], i) : xFormat(labels[i], i), rows));
       };
       overlay.addEventListener("pointermove", (e) => {
@@ -922,6 +938,9 @@
       if (lastPath !== route.path) window.scrollTo(0, 0);
       lastPath = route.path;
       const view = h("div", null);
+      // Views compose optional sections with `cond ? node : null`; skip those instead of
+      // letting the DOM's append() print the word "null".
+      view.append = (...nodes) => append(view, nodes);
       try {
         await route.render(view, params, () => mine === token);
         if (mine === token) {
@@ -973,7 +992,7 @@
     h, s, clear, append, store, api, fmt,
     card, stat, badge, banner, meter, empty, field, select, seg, kv, highlight, toast, download, busy, withButton, errorState,
     table, tip, ttContent, attachTip,
-    niceTicks, legend, hbars, columns, line, sparkline, chartCard, seriesColor, cssVar,
-    createApp, pageHead, parseHash,
+    niceTicks, measure, legend, hbars, columns, line, sparkline, chartCard, seriesColor, cssVar,
+    createApp, pageHead, parseHash, initTheme,
   };
 })();
