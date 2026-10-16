@@ -6,6 +6,7 @@
     ragkit compare                   # chunkers, embedders, modes, side by side
     ragkit chunks --strategy section # inspect how a corpus was split
     ragkit stats
+    ragkit ui                        # web UI (needs the server extra)
 
 Exit codes: 0 fine, 1 an evaluation gate failed, 2 usage error.
 """
@@ -14,7 +15,10 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import sys
+import threading
+import webbrowser
 from pathlib import Path
 
 from .answering import ModelGenerator
@@ -270,6 +274,25 @@ def cmd_stats(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_ui(args: argparse.Namespace) -> int:
+    try:
+        import uvicorn
+    except ImportError:
+        print("the web UI needs the server extra: pip install 'ragkit[server]'", file=sys.stderr)
+        return EXIT_USAGE
+    # server.py builds its pipeline at import time from these variables.
+    if args.corpus:
+        os.environ["RAGKIT_CORPUS"] = str(Path(args.corpus).resolve())
+    if args.gold:
+        os.environ["RAGKIT_GOLD"] = str(Path(args.gold).resolve())
+    url = f"http://{args.host}:{args.port}/ui/"
+    print(f"ragkit knowledge assistant: {url}  (Ctrl+C to stop)")
+    if not args.no_browser:
+        threading.Timer(1.2, webbrowser.open, args=(url,)).start()
+    uvicorn.run("ragkit.server:app", host=args.host, port=args.port, log_level="warning")
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ragkit",
@@ -340,6 +363,14 @@ def build_parser() -> argparse.ArgumentParser:
     stats = sub.add_parser("stats", help="describe the built index")
     add_index_args(stats)
     stats.set_defaults(func=cmd_stats)
+
+    ui = sub.add_parser("ui", help="open the web UI (needs the server extra)")
+    ui.add_argument("--corpus", help="directory of .md documents")
+    ui.add_argument("--gold", help="gold question set for the evaluation view")
+    ui.add_argument("--host", default="127.0.0.1")
+    ui.add_argument("--port", type=int, default=8766)
+    ui.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
+    ui.set_defaults(func=cmd_ui)
 
     return parser
 

@@ -174,6 +174,29 @@ Chroma filters inside the query.
 
 ## Usage
 
+### Web UI
+
+```bash
+pip install -e ".[server]"
+ragkit ui                      # opens http://127.0.0.1:8766/ui/
+```
+
+![Ask view: a cited answer with its ranked evidence, and a question the corpus cannot answer being declined](docs/images/ui-ask.png)
+
+- **Ask**: answers with numbered citation markers. Click a marker to see the chunk it
+  came from, with its dense and BM25 scores and the terms that matched. When the
+  assistant declines, it shows which threshold the evidence missed.
+- **Retrieval**: one query through dense, lexical and hybrid search side by side. Pick
+  a gold question to see which retriever finds the relevant document.
+- **Documents**: the corpus with chunk boundaries shaded. Paste a new document and it
+  is chunked, embedded and searchable at once.
+- **Evaluation**: the same harness as `ragkit eval` and `ragkit compare`, with
+  per-question results you can filter down to the misses.
+
+![Retrieval view: BM25 misses a paraphrase that dense search finds, and hybrid keeps it](docs/images/ui-retrieval.png)
+
+`ragkit ui --corpus ./docs --gold ./gold.json` serves your own documents.
+
 ### CLI
 
 ```bash
@@ -271,11 +294,13 @@ src/ragkit/
   answering.py     Extractive/template/model generation + citation verification
   evaluation.py    Metrics, gold sets, side-by-side comparison
   pipeline.py      The assembled stack
-  cli.py           ask / search / eval / compare / chunks / stats
+  cli.py           ask / search / eval / compare / chunks / stats / ui
+  server.py        HTTP API behind the web UI
+  web/             Web UI: static HTML, CSS and JS, no build step
   stores/          base + memory (exact), FAISS, Chroma
 data/corpus/       Six synthetic policy documents
 data/gold_questions.json   26 labelled questions, 3 unanswerable
-tests/             119 tests
+tests/             128 tests
 ```
 
 ## Testing
